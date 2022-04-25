@@ -6,7 +6,7 @@ from tkinter import filedialog
 import time
 
 class ViewASFP:
-    NB_IMAGES_PER_COLUMN = 2
+    NB_IMAGES_PER_COLUMN = 5
     FORMAT_IMAGE_OUTPUT = (250,250)
     INDEX_ROW_IMAGES = 3
 

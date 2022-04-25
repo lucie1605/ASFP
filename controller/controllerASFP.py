@@ -10,15 +10,12 @@ class ControllerASFP:
         self.view = ViewASFP(self.root, self.model)
 
     def run(self):
-        # boucle principale
         self.root.mainloop()
 
 
 def main():
     c = ControllerASFP()
     c.run()
-
-    root = tk.Tk()  # View
 
 
 if __name__ == '__main__':
