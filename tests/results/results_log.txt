@@ -1,0 +1,55 @@
+[INFO] running test_faceDetection_vs_format, (0, <class 'ASFP.faceDetectionHOGLinearSVM.FaceDetectionHOGLinearSVM'>)...
+[INFO] face detection took 14.3510 seconds
+Max faces detected : 4.0, in real there are 4.0 faces 
+Max faces detected : 0.0, in real there are 4.0 faces 
+Max faces detected : 2.0, in real there are 4.0 faces 
+Max faces detected : 0.0, in real there are 30.0 faces 
+Max faces detected : 0.0, in real there are 40.0 faces 
+[INFO] 2022-04-21 18:56:29.173269
+[INFO] running test_faceDetection_vs_format, (1, <class 'ASFP.faceDetectionHOGLinearSVM.FaceDetectionHOGLinearSVM'>)...
+[INFO] face detection took 17.4596 seconds
+Max faces detected : 4.0, in real there are 4.0 faces 
+Max faces detected : 1.0, in real there are 4.0 faces 
+Max faces detected : 2.0, in real there are 4.0 faces 
+Max faces detected : 0.0, in real there are 30.0 faces 
+Max faces detected : 4.0, in real there are 40.0 faces 
+[INFO] 2022-04-21 18:56:46.633833
+[INFO] running test_faceDetection_vs_format, (2, <class 'ASFP.faceDetectionHOGLinearSVM.FaceDetectionHOGLinearSVM'>)...
+[INFO] face detection took 33.5612 seconds
+Max faces detected : 4.0, in real there are 4.0 faces 
+Max faces detected : 1.0, in real there are 4.0 faces 
+Max faces detected : 3.0, in real there are 4.0 faces 
+Max faces detected : 5.0, in real there are 30.0 faces 
+Max faces detected : 19.0, in real there are 40.0 faces 
+[INFO] 2022-04-21 18:57:20.196060
+[INFO] running test_faceDetection_vs_format, (3, <class 'ASFP.faceDetectionHOGLinearSVM.FaceDetectionHOGLinearSVM'>)...
+[INFO] face detection took 99.4578 seconds
+Max faces detected : 4.0, in real there are 4.0 faces 
+Max faces detected : 1.0, in real there are 4.0 faces 
+Max faces detected : 2.0, in real there are 4.0 faces 
+Max faces detected : 18.0, in real there are 30.0 faces 
+Max faces detected : 20.0, in real there are 40.0 faces 
+[INFO] 2022-04-21 18:58:59.653860
+[INFO] running test_faceDetection_vs_format, (0, <class 'ASFP.faceDetectionCNN.FaceDetectionCNN'>)...
+[INFO] face detection took 171.6709 seconds
+Max faces detected : 3.0, in real there are 4.0 faces 
+Max faces detected : 0.0, in real there are 4.0 faces 
+Max faces detected : 4.0, in real there are 4.0 faces 
+Max faces detected : 0.0, in real there are 30.0 faces 
+Max faces detected : 0.0, in real there are 40.0 faces 
+[INFO] 2022-04-21 19:01:51.324723
+[INFO] running test_faceDetection_vs_format, (1, <class 'ASFP.faceDetectionCNN.FaceDetectionCNN'>)...
+[INFO] face detection took 653.5495 seconds
+Max faces detected : 4.0, in real there are 4.0 faces 
+Max faces detected : 1.0, in real there are 4.0 faces 
+Max faces detected : 4.0, in real there are 4.0 faces 
+Max faces detected : 0.0, in real there are 30.0 faces 
+Max faces detected : 5.0, in real there are 40.0 faces 
+[INFO] 2022-04-21 19:12:44.874233
+[INFO] running test_faceDetection_vs_format, (2, <class 'ASFP.faceDetectionCNN.FaceDetectionCNN'>)...
+[INFO] face detection took 13274.7867 seconds
+Max faces detected : 4.0, in real there are 4.0 faces 
+Max faces detected : 1.0, in real there are 4.0 faces 
+Max faces detected : 4.0, in real there are 4.0 faces 
+Max faces detected : 2.0, in real there are 30.0 faces 
+Max faces detected : 28.0, in real there are 40.0 faces
