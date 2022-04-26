@@ -1,6 +1,7 @@
 from model.faceDetection import FaceDetection
 from model.helpers import convert_and_trim_bb
 import dlib
+import cv2
 
 
 class FaceDetectionHOGLinearSVM(FaceDetection):
