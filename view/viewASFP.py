@@ -1,77 +1,127 @@
+import ntpath
 import os
+import time
 import tkinter as tk
 import cv2
-from PIL import ImageTk, Image
+from PIL import Image, ImageTk
 from tkinter import filedialog
-import time
+from tkinter import ttk
+
 
 class ViewASFP:
-    NB_IMAGES_PER_COLUMN = 5
-    FORMAT_IMAGE_OUTPUT = (250,250)
-    INDEX_ROW_IMAGES = 3
+    WIDTH = 800
+    HEIGHT = 600
+    NB_IMAGES_PER_LINE = 5
+    FORMAT_FAMILY_PHOTO = (250, 250)
+    FORMAT_IMAGE_MEMBERS = (150, 150)
+    INDEX_ROW_IMAGES = 15
+    NB_COLUMNS = 5
+    DEFAULT_MODEL_DETECTION_PARAM = 3
 
     def __init__(self, root, model):
+        self.family_photos_path = None
+        self.members_photos_path = None
         self.root = root
+        self.root.title("Automatic Sort for Family Photos")
+        self.root.geometry(f"{ViewASFP.WIDTH}x{ViewASFP.HEIGHT}")
         self.model = model
-        self.model_param = tk.IntVar()
-        self.directory_path = None
-        self.picture = None
-        self.info = None
+        self.msg_load_family = tk.StringVar()
+        self.msg_load_members = tk.StringVar()
+        self.members = {}
 
-        tk.Button(root, text='load image', command=self.load_img).grid(row=0, column=0, padx=2, pady=2)
-        tk.Button(root, text='load directory', command=self.load_directory).grid(row=0, column=1, padx=2, pady=2)
-        tk.Button(root, text='apply face detection', command=self.apply_face_detection).grid(row=1, column=0, padx=2, pady=2)
-        tk.Entry(self.root, textvariable=self.model_param).grid(row=1, column=1, padx=2, pady=2)
-        tk.Label(self.root, text="input parameter model, enter a value between 0 and 5.").grid(row=1, column=2, padx=2, pady=2)
+        window_buttons_load = tk.PanedWindow()
+        row = 0 # to 1
+        nb_rows = 3
+        window_buttons_load.grid(row=row, column=0, columnspan=ViewASFP.NB_COLUMNS, rowspan= nb_rows)
+        tk.Button(window_buttons_load, text='load family photos', command=self.load_family_photos).grid(row=0, column=0, padx=2, pady=2)
+        tk.Label(window_buttons_load, textvariable=self.msg_load_family).grid(row=0, column=1, padx=2, pady=2)
+        tk.Button(window_buttons_load, text='load members photos', command=self.load_members_photos).grid(row=1, column=0, padx=2, pady=2)
+        tk.Label(window_buttons_load, textvariable=self.msg_load_members).grid(row=1, column=1, padx=2, pady=2)
+        tk.Button(window_buttons_load, text='apply face recognition',
+                  command=self.recognize_members_in_family_photos).grid(row=2, column=0, padx=2, pady=2)
 
+        # show all faces to recognize:
+        row += nb_rows  # to 3
+        # TODO nb_rows must not be constant
+        nb_rows = 1 # depends on the nb of images nbImagesTotal / NB_IMAGES_PER_LINE x2
+        self.window_display_members = tk.PanedWindow()
+        self.window_display_members.grid(row=row, column=0, columnspan=ViewASFP.NB_COLUMNS, rowspan=nb_rows)
 
-    def load_img(self):
-        self.picture = filedialog.askopenfilename(initialdir="/", title="Select file",
-                                             filetypes=(("jpeg files", "*.jpg"), ("all files", "*.*")))
-        tk.Label(self.root, text=f"1 image loaded : {self.picture}").grid(row=0, column=2, padx=2,
-                                                                                               pady=2)
+        # show all faces to recognize:
+        row += nb_rows  # to end
+        nb_rows = 5  # depends on the nb of images nbImagesTotal / NB_IMAGES_PER_LINE x2
+        self.window_display_family_pict = tk.PanedWindow()
+        self.window_display_family_pict.grid(row=row, column=0, columnspan=ViewASFP.NB_COLUMNS, rowspan=nb_rows)
 
-    def load_directory(self):
-        self.directory_path = filedialog.askdirectory()
-        tk.Label(self.root, text=f"1 folder loaded : {self.directory_path}").grid(row=0, column=2, padx=2,
-                                                                             pady=2)
+        self.last_row = row+nb_rows
+        row += nb_rows
 
-    def show_image_after_detection(self, image, row=1, column=0):
-        blue, green, red = cv2.split(image)
-        img = cv2.merge((red, green, blue))
-        img = Image.fromarray(img)
-        img = img.resize(ViewASFP.FORMAT_IMAGE_OUTPUT)
-        imgtk = ImageTk.PhotoImage(img)
-        panel = tk.Label(self.root, image=imgtk)
-        panel.image = imgtk
-        panel.grid(row=row, column=column)
+    def load_family_photos(self):
+        self.family_photos_path = filedialog.askdirectory()
+        self.msg_load_family.set(f"1 folder loaded : {self.family_photos_path}")
+        # TODO : put number of photos
 
-    def apply_face_detection_on_one_image(self, image, row, column):
-        self.model.get_detected_faces(imagePath=image, modelParam=self.model_param.get())
-        image_with_boxes = self.model.get_image_with_boxes()
-        self.show_image_after_detection(image_with_boxes, row, column)
+    def load_members_photos(self):
+        self.members_photos_path = filedialog.askdirectory()
+        self.msg_load_members.set(f"1 folder loaded : {self.members_photos_path}")
+        #TODO : put number of photos
+        self.display_members_of_family()
 
-    def apply_face_detection(self):
-        if self.picture:
-            self.apply_face_detection_on_one_image(self.picture, ViewASFP.INDEX_ROW_IMAGES, 0)
-            self.info = self.model.get_info_about_computing()
-            tk.Label(self.root, text=self.info).grid(row=ViewASFP.INDEX_ROW_IMAGES + 1, column=0, padx=2, pady=2)
-        if self.directory_path:
+    def display_members_of_family(self):
+        if self.members_photos_path:
             row = ViewASFP.INDEX_ROW_IMAGES
             column = 0
             nb_images = 0
-            start = time.time()
-            for filename in os.listdir(self.directory_path):
-                f = self.directory_path + "/" + filename
+            for filename in os.listdir(self.members_photos_path):
+                f = self.members_photos_path + "/" + filename
                 # TODO : accepter seulement les fichiers image
                 if os.path.isfile(f):
-                    self.apply_face_detection_on_one_image(f, row, column)
-                    self.info = self.model.get_info_about_computing()
-                    tk.Label(self.root, text=self.info).grid(row=row + 1, column=column, padx=2, pady=2)
+                    faces = self.model.detectionModel.get_detected_faces(f, ViewASFP.DEFAULT_MODEL_DETECTION_PARAM)
+                    self.show_image_after_detection(faces[0],self.window_display_members,
+                                                    row+1, column, ViewASFP.FORMAT_IMAGE_MEMBERS)
+                    name = ntpath.basename(f).split(".")[0]
+                    self.members[name] = faces[0]
+                    tk.Label(self.window_display_members, text=name).grid(row=row, column=column, padx=2, pady=2)
                     column += 1
                     nb_images+=1
-                    if column == ViewASFP.NB_IMAGES_PER_COLUMN:
+                    if column == ViewASFP.NB_IMAGES_PER_LINE:
                         row += 2
                         column = 0
+
+    def show_image_after_detection(self, image, window, row=1, column=0, format=(150,150)):
+        blue, green, red = cv2.split(image)
+        img = cv2.merge((red, green, blue))
+        img = Image.fromarray(img)
+        img = img.resize(format)
+        imgtk = ImageTk.PhotoImage(img)
+        panel = tk.Label(window, image=imgtk)
+        panel.image = imgtk
+        panel.grid(row=row, column=column)
+
+    def recognize_members_in_family_photos(self):
+        if self.family_photos_path:
+            nb_images = 0
+            start = time.time()
+            self.model.recognize_faces(self.members, self.family_photos_path)
+            dico_with_boxes = self.model.get_boxes_images_of_the_person_to_identify()
             end = time.time()
-            tk.Label(self.root, text=f"Total : {end-start} seconds for {nb_images} images.").grid(row=row + 2, column=0, padx=2, pady=2)
+            tabControl = ttk.Notebook(self.window_display_family_pict)
+            for k,v in dico_with_boxes.items():
+                column = 0
+                #row = ViewASFP.INDEX_ROW_IMAGES
+                row=0
+                tab = ttk.Frame(tabControl, width= ViewASFP.WIDTH)
+                tabControl.add(tab, text=k)
+                tk.Label(tab, text=f"member : {k} found in {len(v)} photos").grid(row=row,column=0,padx=2, pady=2)
+                for photo in v:
+                    self.show_image_after_detection(photo, tab, row + 1, column, ViewASFP.FORMAT_FAMILY_PHOTO)
+                    column += 1
+                    nb_images += len(v)
+                    if column == ViewASFP.NB_IMAGES_PER_LINE:
+                        row += 1
+                        column = 0
+            # tabControl.pack(expand=True, fill="both")
+            tabControl.grid(row=0, column=0, sticky="ew")
+        tk.Label(self.root, text=f"Total : {end-start} seconds for {nb_images} images.").grid(row=self.last_row , column=0,
+                                                                                                     sticky="w")
+

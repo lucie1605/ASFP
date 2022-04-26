@@ -1,5 +1,5 @@
 import cv2
-import imutils
+# import imutils
 import abc
 import os
 import time
@@ -17,9 +17,10 @@ class FaceDetection(abc.ABC):
 
     def __format_image(self, convertToGray, appliedWidth):
         if appliedWidth:
-            if type(appliedWidth) != int:
-                appliedWidth = 500
-            self.outputImage = imutils.resize(self.outputImage, width=appliedWidth)
+            pass
+            # if type(appliedWidth) != int:
+            #     appliedWidth = 500
+            # self.outputImage = imutils.resize(self.outputImage, width=appliedWidth)
         if convertToGray:
             self.formatedImage = cv2.cvtColor(self.outputImage, cv2.COLOR_BGR2RGB)
 
