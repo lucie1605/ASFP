@@ -92,7 +92,7 @@ class ViewASFP:
         blue, green, red = cv2.split(image)
         img = cv2.merge((red, green, blue))
         img = Image.fromarray(img)
-        img = img.resize(format)
+        img.thumbnail(format, Image.ANTIALIAS)
         imgtk = ImageTk.PhotoImage(img)
         panel = tk.Label(window, image=imgtk)
         panel.image = imgtk
