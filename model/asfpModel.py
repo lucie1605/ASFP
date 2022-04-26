@@ -18,7 +18,9 @@ class ASFPModel:
         # personsToIdentify is a list of image Path
         # the name of the file is the name of the person to identify
         # persons_to_identify is a dico where key is the name, and value the path of the image
-        self.persons_to_identify = {ntpath.basename(imagePath):imagePath for imagePath in personsToIdentify }
+        # TODO : apply face detection to persons_to_identify
+        # TODO : change imagePath to detected faces
+        self.persons_to_identify = {ntpath.basename(imagePath): imagePath for imagePath in personsToIdentify }
         faces = []
         for photo in familyPhotos:
             faces.append(self.detectionModel.get_detected_faces(photo, self.detectionModelParam))
@@ -26,7 +28,8 @@ class ASFPModel:
                 person_identified = self.recognitionModel.get_identified_person(face, self.persons_to_identify)
                 if person_identified:
                     self.identified_persons[person_identified].append(photo)
-                    self.identified_persons_with_boxes[person_identified].append(self.get_image_with_boxes())
+            #TODO : ajouter les noms sur les photos
+            self.identified_persons_with_boxes[person_identified].append(self.get_image_with_boxes())
 
     def get_images_of_the_person_to_identify(self, person_to_identify):
         return self.identified_persons[person_to_identify]
