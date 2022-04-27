@@ -85,8 +85,9 @@ class ViewASFP:
             row = 1
             column = 0
             members = self.model.detect_members_of_family(self.members_photos_path)
-            for name, face in members.items():
-                self.show_image_after_detection(face, self.window_display_members,
+            members_sorted = sorted(members)
+            for name in members_sorted:
+                self.show_image_after_detection(members[name], self.window_display_members,
                                                 row + 1, column, ViewASFP.FORMAT_IMAGE_MEMBERS)
                 tk.Label(self.window_display_members, text=name).grid(row=row, column=column, padx=2, pady=2)
                 column += 1
@@ -109,19 +110,30 @@ class ViewASFP:
             start = time.time()
             self.model.recognize_faces(self.family_photos_path)
             dico_with_boxes = self.model.get_boxes_images_of_the_person_to_identify()
+            members_sorted = sorted(dico_with_boxes)
             end = time.time()
             tabControl = ttk.Notebook(self.window_display_family_pict)
-            for k, photos in dico_with_boxes.items():
+            for member in members_sorted:
                 column = 0
                 row = 1
                 tab = ttk.Frame(tabControl, width=ViewASFP.WIDTH)
-                tabControl.add(tab, text=k)
-                apply_grid(tk.Label(tab, text=f"member : {k} found in {len(photos)} photos"),row)
-                for photo in photos:
+                tabControl.add(tab, text=f"{member} ({len(dico_with_boxes[member])} recognitions)")
+                apply_grid(tk.Label(tab, text=f"member : {member} found in {len(dico_with_boxes[member])} photos"),row)
+                for photo in dico_with_boxes[member]:
                     self.show_image_after_detection(photo, tab, row + 1, column, ViewASFP.FORMAT_FAMILY_PHOTO)
                     column += 1
                     if column == ViewASFP.NB_IMAGES_PER_LINE:
                         row += 1
                         column = 0
+            row=0
+            for photo in self.model.get_boxes_images_without_anybody():
+                tab = ttk.Frame(tabControl, width=ViewASFP.WIDTH)
+                tabControl.add(tab, text=f"Photos without any "
+                                         f"recognitions({len(self.model.get_boxes_images_without_anybody())})")
+                self.show_image_after_detection(photo, tab, row + 1, column, ViewASFP.FORMAT_FAMILY_PHOTO)
+                column += 1
+                if column == ViewASFP.NB_IMAGES_PER_LINE:
+                    row += 1
+                    column = 0
             tabControl.grid(row=0, column=0, sticky="w")
         apply_grid(tk.Label(self.window_time_elapsed, text=f"Total : {end - start} seconds."), 0)

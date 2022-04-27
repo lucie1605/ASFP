@@ -18,7 +18,7 @@ class FaceDetection(abc.ABC):
         self.faces = []
         self.coordinates = []
         self.info = ""
-        self.timeElapsed = 0
+        self.time_elapsed = 0
 
     def __format_image(self, convertToGray, appliedWidth):
         if appliedWidth:
@@ -37,7 +37,7 @@ class FaceDetection(abc.ABC):
         return self.outputImage
 
     def get_info_about_computing(self):
-        return f"{len(self.faces)} faces detected in {self.timeElapsed} seconds."
+        return f"{len(self.faces)} faces detected in {self.time_elapsed} seconds."
 
     @abc.abstractmethod
     def get_faces_rectangles(self, modelParam=2):
@@ -62,7 +62,7 @@ class FaceDetection(abc.ABC):
             cv2.rectangle(self.outputImage, (x, y), (x + w, y + h), FaceDetection.BOXES_COLOUR, 2)
 
         end = time.time()
-        self.timeElapsed = end - start
+        self.time_elapsed = end - start
         return self.faces
 
     def add_name_on_picture(self, face_id, name):
