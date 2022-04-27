@@ -1,5 +1,4 @@
 import cv2
-# import imutils
 import abc
 import os
 import time
@@ -8,6 +7,8 @@ from copy import deepcopy
 
 class FaceDetection(abc.ABC):
     MODELS_PATH = os.path.dirname(__file__) + "\\dat_files\\"
+    # BOXES_COLOUR = (0, 255, 0)  # green
+    BOXES_COLOUR = (0,0,255) #red
 
     def __init__(self):
         self.coordinates_dico = {}
@@ -58,7 +59,7 @@ class FaceDetection(abc.ABC):
             i+=1
         for (x, y, w, h) in boxes:
             # draw the bounding box on our image
-            cv2.rectangle(self.outputImage, (x, y), (x + w, y + h), (0, 255, 0), 2)
+            cv2.rectangle(self.outputImage, (x, y), (x + w, y + h), FaceDetection.BOXES_COLOUR, 2)
 
         end = time.time()
         self.timeElapsed = end - start
@@ -69,5 +70,5 @@ class FaceDetection(abc.ABC):
         copy_image = deepcopy(self.outputImage)
         x, y = self.coordinates_dico[face_id]
         cv2.putText(copy_image, name, (x - 10, y - 10),
-                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+                    cv2.FONT_HERSHEY_SIMPLEX, 1, FaceDetection.BOXES_COLOUR, 2)
         return deepcopy(copy_image)
