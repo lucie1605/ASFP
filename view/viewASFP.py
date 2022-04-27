@@ -12,11 +12,12 @@ class ViewASFP:
     WIDTH = 800
     HEIGHT = 600
     NB_IMAGES_PER_LINE = 5
-    FORMAT_FAMILY_PHOTO = (250, 250)
+    FORMAT_FAMILY_PHOTO = (350, 350)
     FORMAT_IMAGE_MEMBERS = (150, 150)
     INDEX_ROW_IMAGES = 15
     NB_COLUMNS = 5
     DEFAULT_MODEL_DETECTION_PARAM = 3
+    FONT_SIZE_TITLE = ("Arial", 13)
 
     def __init__(self, root, model):
         self.family_photos_path = None
@@ -31,27 +32,40 @@ class ViewASFP:
 
         window_buttons_load = tk.PanedWindow()
         row = 0 # to 1
-        nb_rows = 3
-        window_buttons_load.grid(row=row, column=0, columnspan=ViewASFP.NB_COLUMNS, rowspan= nb_rows)
-        tk.Button(window_buttons_load, text='load family photos', command=self.load_family_photos).grid(row=0, column=0, padx=2, pady=2)
-        tk.Label(window_buttons_load, textvariable=self.msg_load_family).grid(row=0, column=1, padx=2, pady=2)
-        tk.Button(window_buttons_load, text='load members photos', command=self.load_members_photos).grid(row=1, column=0, padx=2, pady=2)
-        tk.Label(window_buttons_load, textvariable=self.msg_load_members).grid(row=1, column=1, padx=2, pady=2)
-        tk.Button(window_buttons_load, text='apply face recognition',
-                  command=self.recognize_members_in_family_photos).grid(row=2, column=0, padx=2, pady=2)
+        nb_rows = 4
+        window_buttons_load.grid(row=row, column=0, columnspan=ViewASFP.NB_COLUMNS, rowspan= nb_rows,
+                                                                                                     sticky="w")
+        # TITLE
+        tk.Label(window_buttons_load, text="Select a directory containing all Family Photos.", font=ViewASFP.FONT_SIZE_TITLE)\
+            .grid(row=row, column=0, columnspan=ViewASFP.NB_COLUMNS, padx=2, pady=2, sticky="w")
+        row+=1
+        tk.Button(window_buttons_load, text='load family photos', command=self.load_family_photos).grid(row=row, column=0, padx=2, pady=2, sticky="w")
+        tk.Label(window_buttons_load, textvariable=self.msg_load_family).grid(row=row, column=1, padx=2, pady=2, sticky="w")
+        row += 1
+        #TITLE
+        tk.Label(window_buttons_load, text="Select a directory containing photo of members to identify."
+                                           "One member per photo.", font=ViewASFP.FONT_SIZE_TITLE)\
+            .grid(row=row, column=0, columnspan=ViewASFP.NB_COLUMNS, padx=2, pady=2, sticky="w")
+        row += 1
+        tk.Button(window_buttons_load, text='load members photos', command=self.load_members_photos).grid(row=row, column=0, padx=2, pady=2, sticky="w")
+        tk.Label(window_buttons_load, textvariable=self.msg_load_members).grid(row=row, column=1, padx=2, pady=2, sticky="w")
+
 
         # show all faces to recognize:
         row += nb_rows  # to 3
         # TODO nb_rows must not be constant
-        nb_rows = 1 # depends on the nb of images nbImagesTotal / NB_IMAGES_PER_LINE x2
+        nb_rows = 3 # depends on the nb of images nbImagesTotal / NB_IMAGES_PER_LINE x2
         self.window_display_members = tk.PanedWindow()
-        self.window_display_members.grid(row=row, column=0, columnspan=ViewASFP.NB_COLUMNS, rowspan=nb_rows)
+        self.window_display_members.grid(row=row, column=0, columnspan=ViewASFP.NB_COLUMNS, rowspan=nb_rows,
+                                                                                                     sticky="w")
+        tk.Button(self.window_display_members, text='apply face recognition',
+                  command=self.recognize_members_in_family_photos).grid(row=nb_rows, column=0, padx=2, pady=2, sticky="w")
 
         # show all faces to recognize:
         row += nb_rows  # to end
         nb_rows = 5  # depends on the nb of images nbImagesTotal / NB_IMAGES_PER_LINE x2
         self.window_display_family_pict = tk.PanedWindow()
-        self.window_display_family_pict.grid(row=row, column=0, columnspan=ViewASFP.NB_COLUMNS, rowspan=nb_rows)
+        self.window_display_family_pict.grid(row=row, column=0, columnspan=ViewASFP.NB_COLUMNS, rowspan=nb_rows, sticky="w")
 
         self.last_row = row+nb_rows
         row += nb_rows
@@ -69,7 +83,9 @@ class ViewASFP:
 
     def display_members_of_family(self):
         if self.members_photos_path:
-            row = ViewASFP.INDEX_ROW_IMAGES
+            tk.Label(self.window_display_members, text="Family Members to Recognize:", font=ViewASFP.FONT_SIZE_TITLE)\
+                .grid(row=0, column=0, columnspan=ViewASFP.NB_COLUMNS, padx=2, pady=2, sticky="w")
+            row = 1
             column = 0
             nb_images = 0
             for filename in os.listdir(self.members_photos_path):
@@ -109,7 +125,7 @@ class ViewASFP:
             for k,v in dico_with_boxes.items():
                 column = 0
                 #row = ViewASFP.INDEX_ROW_IMAGES
-                row=0
+                row=1
                 tab = ttk.Frame(tabControl, width= ViewASFP.WIDTH)
                 tabControl.add(tab, text=k)
                 tk.Label(tab, text=f"member : {k} found in {len(v)} photos").grid(row=row,column=0,padx=2, pady=2)
@@ -121,7 +137,7 @@ class ViewASFP:
                         row += 1
                         column = 0
             # tabControl.pack(expand=True, fill="both")
-            tabControl.grid(row=0, column=0, sticky="ew")
-        tk.Label(self.root, text=f"Total : {end-start} seconds for {nb_images} images.").grid(row=self.last_row , column=0,
+            tabControl.grid(row=0, column=0, sticky="w")
+        tk.Label(self.root, text=f"Total : {end-start} seconds.").grid(row=self.last_row , column=0,
                                                                                                      sticky="w")
 

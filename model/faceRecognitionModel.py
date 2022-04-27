@@ -1,16 +1,18 @@
 import os
-
+import time
 import dlib
 import math
 
 
 class FaceRecognitionModel:
     MODELS_PATH = os.path.dirname(__file__) + "\\dat_files\\"
+
     def __init__(self):
         self.__shape_predictor = \
             dlib.shape_predictor(FaceRecognitionModel.MODELS_PATH + "shape_predictor_5_face_landmarks.dat")
         self.__face_recognition_model = \
             dlib.face_recognition_model_v1(FaceRecognitionModel.MODELS_PATH + "dlib_face_recognition_resnet_model_v1.dat")
+        self.timeElapsed = 0
 
     def get_identified_person(self, face, people_known):
         # face is an image of one face to identify
