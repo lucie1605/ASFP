@@ -32,6 +32,7 @@ class ASFPModel:
                     self.peopleToIdentify[name] = list(detected_faces_id.values())[0]
                     print(f"[Family Member Detection] {name} detected in photo {filename}"
                           f" in {self.detectionModel.time_elapsed} seconds.")
+        print("*"*100)
         return self.peopleToIdentify
 
     def recognize_faces(self, family_photos_path):
@@ -40,7 +41,7 @@ class ASFPModel:
             if os.path.isfile(photo):
                 self.detectionModel.get_detected_faces(photo, self.detectionModelParam)
                 detected_faces_id = self.detectionModel.faces_dico
-                print(f"[Family Photo Detection] {len(detected_faces_id)} faces detected in photo {filename}"
+                print(f"[Detection in {filename}] {len(detected_faces_id)} faces detected."
                       f" in {self.detectionModel.time_elapsed} seconds.")
                 nb_detected_people = 0
                 for face_id, face in detected_faces_id.items():
@@ -49,8 +50,7 @@ class ASFPModel:
                         nb_detected_people+=1
                 if not nb_detected_people:
                     self.photo_without_anybody.append(self.detectionModel.get_image_with_boxes())
-
-
+            print("*" * 100)
 
     def __identify_face_in_picture(self, photo, face, face_id, filename):
         start = time.time()

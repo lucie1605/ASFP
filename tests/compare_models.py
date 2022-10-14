@@ -57,8 +57,8 @@ def test_faceDetection_vs_format(modelParam=0, cls=FaceDetectionHOGLinearSVM, su
 
 
 if __name__ == '__main__':
-    # for i in range(4):
-    #     test_faceDetection_vs_format(i, FaceDetectionHOGLinearSVM)
+    for i in range(4):
+        test_faceDetection_vs_format(i, FaceDetectionHOGLinearSVM)
     for i in range(4):
         test_faceDetection_vs_format(i, FaceDetectionCNN)
 

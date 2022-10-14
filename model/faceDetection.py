@@ -59,7 +59,7 @@ class FaceDetection(abc.ABC):
             i+=1
         for (x, y, w, h) in boxes:
             # draw the bounding box on our image
-            cv2.rectangle(self.outputImage, (x, y), (x + w, y + h), FaceDetection.BOXES_COLOUR, 2)
+                cv2.rectangle(self.outputImage, (x, y), (x + w, y + h), FaceDetection.BOXES_COLOUR, 2)
 
         end = time.time()
         self.time_elapsed = end - start
